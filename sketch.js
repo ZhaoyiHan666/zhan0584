@@ -1,5 +1,6 @@
-// Iteration 1 – Rotation
-// This is my first iteration,adding rotation animation
+// Iteration 2 – Rotation + Falling
+// This is my second iteration, adding falling animation to rotation
+
 
 let colorPalettes = [
   ["#8BC34A", "#81D4FA", "#F48FB1", "#CE93D8", "#FFCC80", "#AED581"],//Palette 1: greens and blues
@@ -47,7 +48,6 @@ function setup() {
       }
       tries++;
     }
-
     if (ok) {
       placed.push({ x, y, size });
       // Create new AnimatedCircle object and add to circles array
@@ -61,8 +61,8 @@ function draw() {
   background("#1e2c3a");
 
   for (let circle of circles) {
-    circle.update();  // update rotation angle
-    circle.display(); // draw the circle
+    circle.update();// update rotation angle
+    circle.display();// draw the circle
   }
 }
 
@@ -74,17 +74,27 @@ class AnimatedCircle {
     this.baseSize = size;
     this.palette = random(colorPalettes);
 
-    // Rotation parameters
-    this.rotationAngle = random(360);      // Initial angle is random number between 0-360
-    this.rotationSpeed = random(0.5, 1.5); // Rotation speed is random between 0.5-1.5 degrees per frame
+    // Rotation parameters is the same as iteration 1
+    this.rotationAngle = random(360);// Initial angle is random number between 0-360
+    this.rotationSpeed = random(0.5, 1.5);// Rotation speed is random between 0.5-1.5 degrees per frame
     if (random() > 0.5) {
       this.rotationSpeed *= -1; // 50% chance to make speed navagive rotate counter-clockwise
     }
+
+    // Falling parameters
+    this.fallSpeed = random(0.3, 0.8);
   }
 
-  // This method is called every frame
   update() {
-    this.rotationAngle += this.rotationSpeed; // Increase angle each frame, creates rotation animation
+    // rotation
+    this.rotationAngle += this.rotationSpeed;// Increase angle each frame, creates rotation animation
+    // falling animation
+    this.y += this.fallSpeed;// y coordinate increases each frame
+
+    // if function checks if fallen off screen. If it completely falls out of the bottom of the canvas, it will reappear from the top (looping).
+    if (this.y > height + this.baseSize) {
+      this.y = -this.baseSize;
+    }
   }
 
   // This method is for drawing circle
