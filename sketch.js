@@ -185,6 +185,8 @@ class AnimatedCircle {
     let mainColor = palette[colorIndex % palette.length];
     
     // Convert hex color to color object so we can use rgb
+    // Creates a p5.Color object
+    // reference: https://p5js.org/reference/p5/color/
     let mainCol = color(mainColor);
     
     // Background glow
