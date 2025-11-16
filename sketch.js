@@ -1,5 +1,5 @@
-// Iteration 3 – Rotation + Falling + Breathing
-// This is my  third iteration,adding breathing scale animation to rotation and falling
+// Iteration 4 – Rotation + Falling + Breathing + Orbiting
+// This is my fourth iteration,making outer dots orbit around the main circle like planets around sun
 
 let colorPalettes = [
   ["#8BC34A", "#81D4FA", "#F48FB1", "#CE93D8", "#FFCC80", "#AED581"],//Palette 1: greens and blues
@@ -72,22 +72,27 @@ class AnimatedCircle {
     this.x = x;
     this.y = y;
     this.baseSize = size;
-    this.currentSize = size;       // Current size change with breathing
+    this.currentSize = size;// Current size change with breathing
     this.palette = random(colorPalettes);
 
-    // Rotation parameters
+     // Rotation parameters
     this.rotationAngle = random(360);// Initial angle is random number between 0-360
     this.rotationSpeed = random(0.5, 1.5);// Rotation speed is random between 0.5-1.5 degrees per frame
     if (random() > 0.5) {
       this.rotationSpeed *= -1; // 50% chance to make speed navagive rotate counter-clockwise
     } 
-    // Falling parameters
+
+     // Falling parameters
     this.fallSpeed = random(0.3, 0.8);
 
     // Breathing parameters
-    this.breathPhase = random(360);       // breathPhase
-    this.breathSpeed = random(1, 2);      // breathSpeed
-    this.breathAmount = random(0.15, 0.25); // breathAmount
+    this.breathPhase = random(360);
+    this.breathSpeed = random(1, 2);
+    this.breathAmount = random(0.15, 0.25);
+
+    // Orbiting parameters
+    this.orbitAngle = random(360);
+    this.orbitSpeed = random(1, 3);
   }
 
   update() {
@@ -104,6 +109,9 @@ class AnimatedCircle {
     this.breathPhase += this.breathSpeed;
     let breathScale = 1 + sin(this.breathPhase) * this.breathAmount;
     this.currentSize = this.baseSize * breathScale;
+
+    // Orbit angle increases each frame
+    this.orbitAngle += this.orbitSpeed;
   }
 
   // This method is for drawing circle
@@ -117,7 +125,8 @@ class AnimatedCircle {
     this.drawCircleContent();
     pop();
   }
- // Draw all circle patterns
+
+  // Draw all circle patterns
   drawCircleContent() {
     let size = this.baseSize;
     let palette = this.palette;
@@ -166,7 +175,7 @@ class AnimatedCircle {
     }
 
     // Orbital ring
-    this.drawOrbitalRing(size, palette);
+    this.drawOrbitalRing(size, this.palette);
 
     // 8 spokes
     stroke("#FFFFFF");
@@ -184,21 +193,24 @@ class AnimatedCircle {
     stroke("#FFFFFF");
     strokeWeight(2);
     ellipse(0, 0, size * 0.15);
+
     // Inner: colored small circle
     noStroke();
-    fill(palette[2]);
+    fill(this.palette[2]);
     ellipse(0, 0, size * 0.07);
   }
 
-  // Draw orbital ring
+  // Draw orbital ring with orbiting
   drawOrbitalRing(size, palette) {
-    let outerDotCount = 9;           // Outer ring has 9 big concentric dots
-    let orbitRadius = size * 0.65;   // Orbit radius
+    let outerDotCount = 9;        // Outer ring has 9 big concentric dots
+    let orbitRadius = size * 0.65;// Orbit radius
 
     // draw connecting dots
     this.drawConnectingOrbit(orbitRadius, size, palette, outerDotCount);
+
+    //Concentric dots with orbit angle added
     for (let i = 0; i < outerDotCount; i++) {
-      let angle = i * (360 / outerDotCount);
+      let angle = i * (360 / outerDotCount) + this.orbitAngle;// Add orbitangle to original angle
       let px = cos(angle) * orbitRadius;
       let py = sin(angle) * orbitRadius;
       this.drawConcentricDot(px, py, size * 0.08);
@@ -207,11 +219,12 @@ class AnimatedCircle {
 
   //  Draw small dots between large dots to form dotted orbit
   drawConnectingOrbit(orbitRadius, size, palette, outerDotCount) {
-    let dotsPerSegment = 7;                      
+    let dotsPerSegment = 7;
     let totalConnectingDots = outerDotCount * dotsPerSegment;
 
     for (let i = 0; i < totalConnectingDots; i++) {
-      let angle = i * (360 / totalConnectingDots);
+      // Connecting dots add orbitangle
+      let angle = i * (360 / totalConnectingDots) + this.orbitAngle;
       let px = cos(angle) * orbitRadius;
       let py = sin(angle) * orbitRadius;
 
@@ -222,7 +235,6 @@ class AnimatedCircle {
       fill(dotColor);
       ellipse(px, py, dotSize);
 
-      // 15% chance to add satellite dots to add depth
       if (random() > 0.85) {
         let offset = random(-size * 0.02, size * 0.02);
         let sx = px + cos(angle * 2) * offset;
@@ -234,21 +246,17 @@ class AnimatedCircle {
     }
   }
 
-  // draw three layer concentric dot
+   // draw three layer concentric dot
   drawConcentricDot(x, y, baseSize) {
     push();
     translate(x, y);
-
     fill("#FF9800");
     noStroke();
     ellipse(0, 0, baseSize);
-
     fill("#000000");
     ellipse(0, 0, baseSize * 0.7);
-
     fill("#FFFFFF");
     ellipse(0, 0, baseSize * 0.4);
-
     pop();
   }
 }
