@@ -1,6 +1,5 @@
-// Iteration 2 – Rotation + Falling
-// This is my second iteration, adding falling animation to rotation
-
+// Iteration 3 – Rotation + Falling + Breathing
+// This is my  third iteration,adding breathing scale animation to rotation and falling
 
 let colorPalettes = [
   ["#8BC34A", "#81D4FA", "#F48FB1", "#CE93D8", "#FFCC80", "#AED581"],//Palette 1: greens and blues
@@ -48,7 +47,8 @@ function setup() {
       }
       tries++;
     }
-    if (ok) {
+
+     if (ok) {
       placed.push({ x, y, size });
       // Create new AnimatedCircle object and add to circles array
       circles.push(new AnimatedCircle(x, y, size));
@@ -72,29 +72,38 @@ class AnimatedCircle {
     this.x = x;
     this.y = y;
     this.baseSize = size;
+    this.currentSize = size;       // Current size change with breathing
     this.palette = random(colorPalettes);
 
-    // Rotation parameters is the same as iteration 1
+    // Rotation parameters
     this.rotationAngle = random(360);// Initial angle is random number between 0-360
     this.rotationSpeed = random(0.5, 1.5);// Rotation speed is random between 0.5-1.5 degrees per frame
     if (random() > 0.5) {
       this.rotationSpeed *= -1; // 50% chance to make speed navagive rotate counter-clockwise
-    }
-
+    } 
     // Falling parameters
     this.fallSpeed = random(0.3, 0.8);
+
+    // Breathing parameters
+    this.breathPhase = random(360);       // breathPhase
+    this.breathSpeed = random(1, 2);      // breathSpeed
+    this.breathAmount = random(0.15, 0.25); // breathAmount
   }
 
   update() {
     // rotation
-    this.rotationAngle += this.rotationSpeed;// Increase angle each frame, creates rotation animation
+    this.rotationAngle += this.rotationSpeed;
     // falling animation
-    this.y += this.fallSpeed;// y coordinate increases each frame
-
+    this.y += this.fallSpeed;
     // if function checks if fallen off screen. If it completely falls out of the bottom of the canvas, it will reappear from the top (looping).
     if (this.y > height + this.baseSize) {
       this.y = -this.baseSize;
     }
+
+    // Breathing scale using sin() function
+    this.breathPhase += this.breathSpeed;
+    let breathScale = 1 + sin(this.breathPhase) * this.breathAmount;
+    this.currentSize = this.baseSize * breathScale;
   }
 
   // This method is for drawing circle
@@ -102,11 +111,13 @@ class AnimatedCircle {
     push();
     translate(this.x, this.y);
     rotate(this.rotationAngle);// rotate entire coordinate center
+    // Calculate the scaling ratio based on the current size and the base size
+    let s = this.currentSize / this.baseSize;
+    scale(s);
     this.drawCircleContent();
     pop();
   }
-
-  // Draw all circle patterns
+ // Draw all circle patterns
   drawCircleContent() {
     let size = this.baseSize;
     let palette = this.palette;
@@ -123,14 +134,14 @@ class AnimatedCircle {
     // Scattered dots inside
     let scatterDots = 30;
     for (let i = 0; i < scatterDots; i++) {
-    // Random radius and random angle
-    let r = random(size * 0.05, size * 0.40);
-    let a = random(360);
-    let px = cos(a) * r;
-    let py = sin(a) * r;
-    noStroke();
-    fill(random(palette));
-    ellipse(px, py, size * 0.035);
+      // Random radius and random angle
+      let r = random(size * 0.05, size * 0.40);
+      let a = random(360);
+      let px = cos(a) * r;
+      let py = sin(a) * r;
+      noStroke();
+      fill(random(palette));
+      ellipse(px, py, size * 0.035);
     }
 
     // Ring lines outside
