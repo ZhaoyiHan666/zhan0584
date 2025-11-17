@@ -43,70 +43,29 @@ Added:
 #### 1.Breathing background
 The background uses three sine waves (different speeds) mapped to RGB values to create a slow breathing effect.
 Key code:
-bgBreathPhase = bgBreathPhase + 0.3;
-let bgR = map(sin(bgBreathPhase), -1, 1, 25, 35);
-let bgG = map(sin(bgBreathPhase * 0.7), -1, 1, 40, 50);
-let bgB = map(sin(bgBreathPhase * 0.5), -1, 1, 52, 62);
-background(bgR, bgG, bgB);
+sin(), map()
 #### 2.fading + lifecycle
 Circles fade out.
 Key code：
-if (this.y > height * 0.7) {
-  this.opacity = this.opacity - (this.fadeSpeed * 2);
-} else {
-  this.opacity = this.opacity - (this.fadeSpeed * 0.3);
-}
-
-if (this.opacity < 0) {
-  this.opacity = 0;
-}
+if(), opacity
 #### 3.Color Shifting
 Uses sin + map to cycle through colors in the palette smoothly.
 Key code:
-this.colorShiftPhase += this.colorShiftSpeed;
-
-let colorIndex = floor(
-  map(sin(this.colorShiftPhase), -1, 1, 0, palette.length)
-);
-
-let mainColor = palette[colorIndex % palette.length];
-let mainCol = color(mainColor);
+sin(), map(), % modulo indexing, color() to extract RGB.
 #### 4.New Circle Spawning
 Every 120 frames (~2 seconds), a new circle is created above the screen.Object spawning in my project is implemented using the frame-based animation principles. Since p5.js does not have a native “object spawning” function, the mechanism is built by combining frameCount, JavaScript classes, and array management (push()).
 Key code:
-if (frameCount % 120 === 0 && circles.length < 12) {
-  let size = random(180, 280);
-  let x = random(size, width - size);
-  let y = random(-height * 0.5, -size);
-  circles.push(new AnimatedCircle(x, y, size));
-}
+frameCount, array, push().
 #### 5.orbiting dots with animated size and opacity
 Orbiting dots change size and opacity based on sine waves, creating a “flowing orbit” effect.
 Key code:
-let dotSize = map(
-  sin(angle + this.orbitAngle),
-  -1, 1,
-  size * 0.015,
-  size * 0.04
-);
-
-let dotOpacity = map(
-  sin(angle * 2),
-  -1, 1,
-  this.opacity * 0.4,
-  this.opacity
-);
-
-fill(red(dotColor), green(dotColor), blue(dotColor), dotOpacity);
-ellipse(px, py, dotSize);
+cos(),sin()
 #### 6.RGB Color Control
 Instead of using HEX colors directly, RGB components are extracted so opacity can be animated properly.
-let mainCol = color(mainColor);
-
-fill(red(mainCol), green(mainCol), blue(mainCol), this.opacity);
+key code: color()
 ## Summary
 This time-based animation combines multiple
-techniques (rotation, scaling, sin-based animation, trigonometry, classes, loops) and extends them with several self-researched techniques (dist(), color(), modulo indexing, object spawning). All external references are properly cited according to assignment requirements.
+techniques (rotation, scaling, sin-based animation, trigonometry, classes, loops) and extends them with several self-researched techniques (dist(), color(), modulo indexing, object spawning). All external references are properly cited in references according to assignment requirements.
 ## References
 ### dist()
 https://p5js.org/reference/p5/dist/
